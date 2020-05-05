@@ -26,6 +26,8 @@ COPY .theia/client.cnf /etc/mysql/mysql.conf.d/client.cnf
 
 COPY .theia/start_mysql.sh /etc/mysql/mysql-bashrc-launch.sh
 
+COPY .theia/snippets.json /home/gitpod
+
 USER gitpod
 
 # Start MySQL when we log in

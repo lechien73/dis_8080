@@ -16,5 +16,5 @@
    }
 }
 {
-   "emmet.extensionsPath": "/home/gitpod"
+   "emmet.extensionsPath": ".theia"
 }

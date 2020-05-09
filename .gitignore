@@ -1,3 +1,4 @@
 *.asm
 __pycache__/
 .theia/
+.gitpod*

@@ -1,39 +1,37 @@
-<img src="https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png" style="margin: 0;">
+# 8080 Disassembler in Python
 
-Welcome Matt Rudge,
+This is the first part of a project to emulate the 8080 chip. To be followed, hopefully, by emulation of the Z80 processor. I'm storing the Space Invaders ROMs here as an example of how the disassembly works.
 
-This is the Code Institute student template for Gitpod. We have preinstalled all of the tools you need to get started. You can safely delete this README.md file, or change it for your own project.
+## Usage
 
-## Gitpod Reminders
+There are no dependencies for this project. To use it, simply clone or download this repository and run:
 
-To run a frontend (HTML, CSS, Javascript only) application in Gitpod, in the terminal, type:
+```
+python3 dis.py <file_name>
+```
 
-`python3 -m http.server`
+Where `<file_name>` is the name of the file you wish to disassemble. So, to disassemble `invaders.h`, type:
 
-A blue button should appear to click: *Make Public*,
+```
+python3 dis.py roms/invaders.h
+```
 
-Another blue button should appear to click: *Open Browser*.
+You can redirect the output to a file like this:
 
-To run a backend Python file, type `python3 app.py`, if your Python file is named `app.py` of course.
+```
+python3 dis.py roms/invaders.h > invaders_h.asm
+```
 
-A blue button should appear to click: *Make Public*,
+## Limitations
 
-Another blue button should appear to click: *Open Browser*.
+The disassembler only works with 8080 code. It is a work-in-progress, which means that it might behave unexpectedly or not at all. If it sets your house on fire or chases your cat around the living room, that's not my fault!
 
-In Gitpod you have superuser security privileges by default. Therefore you do not need to use the `sudo` (superuser do) command in the bash terminal in any of the backend lessons.
+No guarantees are given regarding the quality of the disassembled code, although I have compared it with other disassemblies of the Space Invaders ROMs that are available online, and the output is identical.
 
-## Updates Since The Instructional Video
+## License
 
-We continually tweak and adjust this template to help give you the best experience. Here are the updates since the original video was made:
+The Python code for this project is released under the MIT license. I don't know about the Space Invaders ROMS, they're not mine, and are provided here for educational purposes.
 
-**April 16 2020:** The template now automatically installs MySQL instead of relying on the Gitpod MySQL image. The message about a Python linter not being installed has been dealt with, and the set-up files are now hidden in the Gitpod file explorer.
+---
 
-**April 13 2020:** Added the _Prettier_ code beautifier extension instead of the code formatter built-in to Gitpod.
-
-**February 2020:** The initialisation files now _do not_ auto-delete. They will remain in your project. You can safely ignore them. They just make sure that your workspace is configured correctly each time you open it. It will also prevent the Gitpod configuration popup from appearing.
-
-**December 2019:** Added Eventyret's Bootstrap 4 extension. Type `!bscdn` in a HTML file to add the Bootstrap boilerplate. Check out the <a href="https://github.com/Eventyret/vscode-bcdn" target="_blank">README.md file at the official repo</a> for more options.
-
---------
-
-Happy coding!
+Matt Rudge

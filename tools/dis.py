@@ -12,8 +12,10 @@ import opcodes
 
 ops = opcodes.lookup
 
+DEBUG_SET = set()
 
-def dis8080(buffer, pc):
+
+def dis8080(buffer, pc, debug, line_nums):
     """
     Takes the buffer and current program counter as input
     Tries to generate an opcode from the dictionary
@@ -28,7 +30,8 @@ def dis8080(buffer, pc):
 
     # Start the line of assembly, format as 4 digit hex
 
-    asm_line = f"{pc:#0{6}x}\t"[2:]
+    hex_code = hex(buffer[pc])
+    asm_line = f"{pc:#0{6}x}\t"[2:] if line_nums else ""
 
     if opbytes == 1:
         asm_line += opcode
@@ -37,7 +40,8 @@ def dis8080(buffer, pc):
         operand = f"{buffer[pc + 1]:#0{4}x}"[2:]
         asm_line += f"{opcode}{operand}"
     elif opbytes == 3:
-        # Swap the bytes around and pad with zero if needed
+        # Swap the bytes around because 8080 is little endiana
+        # pad with zero if needed
         operand1 = f"{buffer[pc + 2]:#0{4}x}"[2:]
         operand2 = f"{buffer[pc + 1]:#0{4}x}"[2:]
 
@@ -45,10 +49,13 @@ def dis8080(buffer, pc):
 
     print(asm_line.upper())
 
+    if debug and hex_code + ":" + opcode not in DEBUG_SET:
+        DEBUG_SET.add(f"{hex_code}:{opcode}")
+
     return opbytes
 
 
-def main(filename):
+def main(filename, debug, line_nums):
     """
     Open the ROM file for reading as binary
     initialise program counter and start the
@@ -63,11 +70,19 @@ def main(filename):
 
     pc = 0
     while pc < len(buffer):
-        pc += dis8080(buffer, pc)
+        pc += dis8080(buffer, pc, debug, line_nums)
+
+    if debug:
+        with open(filename + ".debug", "w") as debug_file:
+            for opcode in DEBUG_SET:
+                debug_file.write(opcode + "\n")
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        sys.exit("Usage: python3 dis.py <file_name>")
+        sys.exit("Usage: python3 dis.py <file_name> debug")
     else:
-        main(sys.argv[1])
+        debug = True if "debug" in sys.argv else False
+        line_nums = True if "-l" in sys.argv else False
+
+        main(sys.argv[1], debug, line_nums)

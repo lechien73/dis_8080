@@ -1,3 +1,7 @@
+"""
+Opcodes dictionary for assembly and disassembly
+"""
+
 lookup = {
     "0x0": [1, "NOP", 0],
     "0x1": [3, "LXI\tB,#$", 1],

@@ -1,6 +1,6 @@
 # 8080 Assembler and Disassembler in Python
 
-This is the first part of a project to emulate the 8080 chip. To be followed, hopefully, by emulation of the Z80 processor. I'm storing the Space Invaders ROMs here as an example of how the disassembly works.
+This is the first part of a project to emulate the 8080 chip. To be followed, hopefully, by emulation of the Z80 processor. I'm storing the Space Invaders ROMs here as an example of how the disassembly works. The assembler and disassembler are in the `tools` directory.
 
 ## Usage
 
@@ -8,7 +8,7 @@ There are no dependencies for this project. To use it, simply clone or download 
 
 ### Disassembler
 
-To run the disassembler:
+To run the disassembler, change to the tools directory and type:
 
 ```
 python3 dis.py <file_name>
@@ -30,7 +30,7 @@ The disassembler accepts the following switches: `-l` to add line numbers in hex
 
 ### Assembler
 
-To run the assembler, type:
+To run the assembler, change to the tools directory and type
 
 ```
 python3 asm.py input_file output_file

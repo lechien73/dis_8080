@@ -36,6 +36,12 @@ def init_optable():
 
 
 def char_convert(character):
+    """
+    Returns the ASCII character code for the opcode
+    and data.
+    I could have done this in the assemble function
+    but separated it for readability.
+    """
 
     new_char = int("0x" + character, 0)
     return new_char
@@ -45,7 +51,7 @@ def clean_line(line):
     """
     Funky bits of regex to clean the lines. It means that
     a line like this: MOV   A, #$16BF
-    will become this: MOVA 16BF
+    will become this: ["MOVA", "16BF"]
     """
 
     line = regex.sub("(?>\t|\s{2,})|(?>\,)", "", line)
@@ -106,7 +112,11 @@ def main(input_file, output_file):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
+    version = 0.8
+    print(f"Intel 8080 Assembler v{version}")
+    print("Matt Rudge, May 2020")
+    print("--------------------")
+    if len(sys.argv) < 3:
         sys.exit("Usage: python3 asm.py input_file output_file")
     else:
         main(sys.argv[1], sys.argv[2])

@@ -18,6 +18,10 @@ def char_convert(character):
     return new_char
 
 
+def clean_line(line):
+    pass
+
+
 def assemble(line):
 
     line = regex.sub("(?>\t|\s{2,})|(?>\,)", "", line)
@@ -25,19 +29,14 @@ def assemble(line):
 
     op = char_convert(ops_table[line[0]][0]) if line[0] in ops_table else 0
 
+    data = []
     if len(line) > 1:
         data = [char_convert(line[1])] if len(line[1]) == 2 else [char_convert(
             line[1][2:]), char_convert(line[1][:2])]
-    else:
-        data = []
 
-    if data:
-        data.insert(0, op)
-        code = data
-    else:
-        code = [op]
+    data.insert(0, op)
 
-    return code
+    return data
 
 
 def main(input_file, output_file):
@@ -53,7 +52,8 @@ def main(input_file, output_file):
         for line in lines:
             count += 1
             print(f"Line: {count}")
-            o.write(bytearray(assemble(line)))
+            if len(line.strip()) > 1:
+                o.write(bytearray(assemble(line)))
 
 
 if __name__ == "__main__":

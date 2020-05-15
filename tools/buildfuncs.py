@@ -9,4 +9,8 @@ for k, v in ops.items():
 
     hexcode = k if len(k) == 4 else "0x0" + k[2:]
 
-    print(f"elif opcode == \"{hexcode}\":\n\tcpu.{opcode}()".lower())
+    if hexcode[2:] != opcode:
+        line = f"\tdef op_{hexcode}(self):\n\t\t".lower()
+        line += "pass" if v[0] == 1 else f"self.state[\"pc\"] += {v[0] - 1}"
+        line += "\n"
+        print(line)

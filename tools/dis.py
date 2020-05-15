@@ -15,7 +15,7 @@ ops = opcodes.lookup
 DEBUG_SET = set()
 
 
-def dis8080(buffer, pc, debug, line_nums):
+def dis8080(buffer, pc, debug=False, line_nums=False):
     """
     Takes the buffer and current program counter as input
     Tries to generate an opcode from the dictionary
@@ -40,7 +40,7 @@ def dis8080(buffer, pc, debug, line_nums):
         operand = f"{buffer[pc + 1]:#0{4}x}"[2:]
         asm_line += f"{opcode}{operand}"
     elif opbytes == 3:
-        # Swap the bytes around because 8080 is little endiana
+        # Swap the bytes around because 8080 is little endian
         # pad with zero if needed
         operand1 = f"{buffer[pc + 2]:#0{4}x}"[2:]
         operand2 = f"{buffer[pc + 1]:#0{4}x}"[2:]
@@ -79,8 +79,13 @@ def main(filename, debug, line_nums):
 
 
 if __name__ == "__main__":
+
     if len(sys.argv) == 1:
-        sys.exit("Usage: python3 dis.py <file_name> debug")
+        version = 0.8
+        print(f"Intel 8080 Disassembler v{version}")
+        print("Matt Rudge, May 2020")
+        print("--------------------")
+        sys.exit("Usage: python3 dis.py <file_name> [-l debug]")
     else:
         debug = True if "debug" in sys.argv else False
         line_nums = True if "-l" in sys.argv else False

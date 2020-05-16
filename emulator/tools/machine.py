@@ -24,8 +24,24 @@ class i8080():
             }
         }
 
+    def _flag_zero(self, check):
+        self.state["cc"]["z"] = int(check == 0)
+
+    def _flag_sign(self, check):
+        self.state["cc"]["s"] = int((0x80 == (check & 0x80)))
+
+    def _flag_parity(self, check, size):
+        p = 0
+        check = (check & ((1 << size) - 1))
+        for i in range(size):
+            if (x & 0x1):
+                p += 1
+
+            check = check >> 1
+
+        self.state["cc"]["p"] = int((p & 0x1) == 0)
+
     def op_0x00(self):
-        print("NOP")
         return
 
     def op_0x01(self):
@@ -38,20 +54,32 @@ class i8080():
         self.state["a"] = hex(self.state['memory'][memloc])
 
     def op_0x03(self):
-        self.state["b"] = hex(int(self.state["b"], 16) + 1)
-        self.state["c"] = hex(int(self.state["c"], 16) + 1)
+        self.state["b"] = hex(int(self.state["b"], 16) +
+                              1) if int(self.state["b"], 16) + 1 <= 255 else 0
+        self.state["c"] = hex(int(self.state["c"], 16) +
+                              1) if int(self.state["c"], 16) + 1 <= 255 else 0
 
     def op_0x04(self):
-        pass
+        self.state["b"] = hex(int(self.state["b"], 16) +
+                              1) if int(self.state["b"], 16) + 1 <= 255 else 0
+        self._flag_zero(self.state["b"])
+        self._flag_sign(self.state["b"])
+        self._flag_parity(self.state["b"], 8)
 
     def op_0x05(self):
-        pass
+        self.state["b"] = hex(int(self.state["b"], 16) - 1)
+        self._flag_zero(self.state["b"])
+        self._flag_sign(self.state["b"])
+        self._flag_parity(self.state["b"], 8)
 
     def op_0x06(self):
+        self.state["b"] = hex(self.state["memory"][self.state["pc"] + 1])
         self.state["pc"] += 1
 
     def op_0x07(self):
-        pass
+        self.state["cc"]["c"] = int(bin(self.state["a"])[2:3])
+        rotate = bin(self.state["a"])[3:] + bin(self.state["a"])[2:3]
+        self.state["a"] = hex(int("0b" + rotate))
 
     def op_0x09(self):
         pass
@@ -594,7 +622,9 @@ class i8080():
         self.state["pc"] += 2
 
     def op_0xc3(self):
-        self.state["pc"] += 2
+        mem_loc1 = int(hex(self.state["memory"][self.state["pc"] + 2]), 16)
+        mem_loc2 = int(hex(self.state["memory"][self.state["pc"] + 1]), 16)
+        self.state["pc"] = (mem_loc1 << 8) | mem_loc2 - 1
 
     def op_0xc4(self):
         self.state["pc"] += 2

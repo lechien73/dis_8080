@@ -25,7 +25,7 @@ def init_optable():
     return ops_table
 
 
-def emulate8080(ops_table):
+def emulate8080(ops_table, debug):
 
     running = True
 
@@ -34,14 +34,19 @@ def emulate8080(ops_table):
         opcode = f"{cpu.state['memory'][cpu.state['pc']]:#0{4}x}"
 
         if opcode in ops_table:
+            print(f"{cpu.state['pc']}: {ops_table[opcode][0]}")
             eval(f"cpu.op_{opcode}()")
         else:
             print("Invalid operation")
+            running = False
 
         cpu.state["pc"] += 1
 
+        if debug and input("Continue? ").lower() != "y":
+            running = False
 
-def main():
+
+def main(debug):
 
     try:
         with open("../tools/invaders", "rb") as f:
@@ -54,7 +59,8 @@ def main():
 
     ops_table = init_optable()
 
-    emulate8080(ops_table)
+    emulate8080(ops_table, debug)
 
 
-main()
+if __name__ == "__main__":
+    main("debug" in sys.argv)

@@ -1,3 +1,7 @@
+"""
+Builds a function stub from the opcodes table
+"""
+
 import regex
 import opcodes
 

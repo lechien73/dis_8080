@@ -3,13 +3,13 @@ class i8080():
     def __init__(self):
 
         self.state = {
-            "a": 0,
-            "b": 0,
-            "c": 0,
-            "d": 0,
-            "e": 0,
-            "h": 0,
-            "l": 0,
+            "a": 0x0,
+            "b": 0x0,
+            "c": 0x0,
+            "d": 0x0,
+            "e": 0x0,
+            "h": 0x0,
+            "l": 0x0,
             "sp": 0,
             "pc": 0,
             "memory": [],
@@ -40,6 +40,14 @@ class i8080():
             check = check >> 1
 
         self.state["cc"]["p"] = int((p & 0x1) == 0)
+
+    def _check_type(self, register):
+        try:
+            value = str(register)
+        except ValueError:
+            value = register
+
+        return int(value, 16)
 
     def op_0x00(self):
         return
@@ -77,12 +85,18 @@ class i8080():
         self.state["pc"] += 1
 
     def op_0x07(self):
-        self.state["cc"]["c"] = int(bin(self.state["a"])[2:3])
+        self.state["a"] = self._check_type(self.state["a"])
+        self.state["cc"]["cy"] = bin(self.state["a"])[2:3]
         rotate = bin(self.state["a"])[3:] + bin(self.state["a"])[2:3]
-        self.state["a"] = hex(int("0b" + rotate))
+        self.state["a"] = hex(int("0b" + rotate, 0))
 
     def op_0x09(self):
-        pass
+        hl = int((self.state["h"] << 8) | self.state["l"])
+        bc = int((self.state["b"] << 8) | self.state["c"])
+        res = hl + bc
+        self.state["h"] = (res & 0xff00) >> 8
+        self.state["l"] = (res & 0xff)
+        self.state["cc"]["cy"] = ((res & 0xffff0000) > 0)
 
     def op_0x0a(self):
         pass

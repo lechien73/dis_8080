@@ -43,6 +43,9 @@ def emulate8080(ops_table, debug):
         cpu.state["pc"] += 1
 
         if debug and input("Continue? ").lower() != "y":
+            with open("debugfile.txt", "w") as f:
+                for k, v in cpu.state.items():
+                    f.write(f"{k}: {v}\n")
             running = False
 
 

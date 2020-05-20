@@ -50,24 +50,29 @@ class i8080():
         return int(value, 16)
 
     def op_0x00(self):
+        """ NOP """
         return
 
     def op_0x01(self):
+        """ LXI B """
         self.state["b"] = hex(self.state["memory"][self.state["pc"] + 2])
         self.state["c"] = hex(self.state["memory"][self.state["pc"] + 1])
         self.state["pc"] += 2
 
     def op_0x02(self):
+        """ STAX B """
         mem_loc = int(self.state["b"] + self.state["c"][2:], 16)
         self.state["a"] = hex(self.state['memory'][memloc])
 
     def op_0x03(self):
+        """ INX B """
         self.state["b"] = hex(int(self.state["b"], 16) +
                               1) if int(self.state["b"], 16) + 1 <= 255 else 0
         self.state["c"] = hex(int(self.state["c"], 16) +
                               1) if int(self.state["c"], 16) + 1 <= 255 else 0
 
     def op_0x04(self):
+        """ INR B """
         self.state["b"] = hex(int(self.state["b"], 16) +
                               1) if int(self.state["b"], 16) + 1 <= 255 else 0
         self._flag_zero(self.state["b"])
@@ -75,22 +80,26 @@ class i8080():
         self._flag_parity(self.state["b"], 8)
 
     def op_0x05(self):
+        """ DCR B """
         self.state["b"] = hex(int(self.state["b"], 16) - 1)
         self._flag_zero(self.state["b"])
         self._flag_sign(self.state["b"])
         self._flag_parity(self.state["b"], 8)
 
     def op_0x06(self):
+        """ MVI B """
         self.state["b"] = hex(self.state["memory"][self.state["pc"] + 1])
         self.state["pc"] += 1
 
     def op_0x07(self):
+        """ RLC """
         self.state["a"] = self._check_type(self.state["a"])
         self.state["cc"]["cy"] = bin(self.state["a"])[2:3]
         rotate = bin(self.state["a"])[3:] + bin(self.state["a"])[2:3]
         self.state["a"] = hex(int("0b" + rotate, 0))
 
     def op_0x09(self):
+        """ DAD B """
         hl = int((self.state["h"] << 8) | self.state["l"])
         bc = int((self.state["b"] << 8) | self.state["c"])
         res = hl + bc
@@ -99,18 +108,21 @@ class i8080():
         self.state["cc"]["cy"] = ((res & 0xffff0000) > 0)
 
     def op_0x0a(self):
+        """ LDAX B """
         mem_loc1 = int(hex(self.state["b"]), 16)
         mem_loc2 = int(hex(self.state["c"]), 16)
 
         self.state["a"] = self.state["memory"][(mem_loc1 << 8) | mem_loc2]
 
     def op_0x0b(self):
+        """ DCX B """
         self.state["b"] = hex(int(self.state["b"], 16) -
                               1) if int(self.state["b"], 16) - 1 >= 0 else 255
         self.state["c"] = hex(int(self.state["c"], 16) +
                               1) if int(self.state["c"], 16) - 1 >= 0 else 255
 
     def op_0x0c(self):
+        """ INR C """
         self.state["c"] = hex(int(self.state["c"], 16) +
                               1) if int(self.state["c"], 16) + 1 <= 255 else 0
         self._flag_zero(self.state["c"])
@@ -118,32 +130,49 @@ class i8080():
         self._flag_parity(self.state["c"], 8)
 
     def op_0x0d(self):
+        """ DCR C """
         self.state["c"] = hex(int(self.state["c"], 16) - 1)
         self._flag_zero(self.state["c"])
         self._flag_sign(self.state["c"])
         self._flag_parity(self.state["c"], 8)
 
     def op_0x0e(self):
+        """ MVI C """
         self.state["c"] = hex(self.state["memory"][self.state["pc"] + 1])
         self.state["pc"] += 1
 
     def op_0x0f(self):
+        """ RRC """
         self.state["a"] = self._check_type(self.state["a"])
         self.state["cc"]["cy"] = bin(self.state["a"])[-1:]
         rotate = bin(self.state["a"])[-1:] + bin(self.state["a"])[2:-1]
         self.state["a"] = hex(int("0b" + rotate, 0))
 
     def op_0x11(self):
+        """ LXI D """
+        self.state["d"] = hex(self.state["memory"][self.state["pc"] + 2])
+        self.state["e"] = hex(self.state["memory"][self.state["pc"] + 1])
         self.state["pc"] += 2
 
     def op_0x12(self):
-        pass
+        """ STAX D """
+        mem_loc = int(self.state["b"] + self.state["c"][2:], 16)
+        self.state["d"] = hex(self.state['memory'][memloc])
 
     def op_0x13(self):
-        pass
+        """ INX D """
+        self.state["d"] = hex(int(self.state["d"], 16) +
+                              1) if int(self.state["d"], 16) + 1 <= 255 else 0
+        self.state["e"] = hex(int(self.state["e"], 16) +
+                              1) if int(self.state["e"], 16) + 1 <= 255 else 0
 
     def op_0x14(self):
-        pass
+        """ INR D """
+        self.state["d"] = hex(int(self.state["d"], 16) +
+                              1) if int(self.state["d"], 16) + 1 <= 255 else 0
+        self._flag_zero(self.state["d"])
+        self._flag_sign(self.state["d"])
+        self._flag_parity(self.state["d"], 8)
 
     def op_0x15(self):
         pass

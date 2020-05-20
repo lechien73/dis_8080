@@ -99,22 +99,39 @@ class i8080():
         self.state["cc"]["cy"] = ((res & 0xffff0000) > 0)
 
     def op_0x0a(self):
-        pass
+        mem_loc1 = int(hex(self.state["b"]), 16)
+        mem_loc2 = int(hex(self.state["c"]), 16)
+
+        self.state["a"] = self.state["memory"][(mem_loc1 << 8) | mem_loc2]
 
     def op_0x0b(self):
-        pass
+        self.state["b"] = hex(int(self.state["b"], 16) -
+                              1) if int(self.state["b"], 16) - 1 >= 0 else 255
+        self.state["c"] = hex(int(self.state["c"], 16) +
+                              1) if int(self.state["c"], 16) - 1 >= 0 else 255
 
     def op_0x0c(self):
-        pass
+        self.state["c"] = hex(int(self.state["c"], 16) +
+                              1) if int(self.state["c"], 16) + 1 <= 255 else 0
+        self._flag_zero(self.state["c"])
+        self._flag_sign(self.state["c"])
+        self._flag_parity(self.state["c"], 8)
 
     def op_0x0d(self):
-        pass
+        self.state["c"] = hex(int(self.state["c"], 16) - 1)
+        self._flag_zero(self.state["c"])
+        self._flag_sign(self.state["c"])
+        self._flag_parity(self.state["c"], 8)
 
     def op_0x0e(self):
+        self.state["c"] = hex(self.state["memory"][self.state["pc"] + 1])
         self.state["pc"] += 1
 
     def op_0x0f(self):
-        pass
+        self.state["a"] = self._check_type(self.state["a"])
+        self.state["cc"]["cy"] = bin(self.state["a"])[-1:]
+        rotate = bin(self.state["a"])[-1:] + bin(self.state["a"])[2:-1]
+        self.state["a"] = hex(int("0b" + rotate, 0))
 
     def op_0x11(self):
         self.state["pc"] += 2

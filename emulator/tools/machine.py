@@ -194,13 +194,27 @@ class i8080():
         self.state["a"] = hex(int("0b" + rotate, 0))
 
     def op_0x19(self):
-        pass
+        """ DAD D """
+        hl = int((self.state["h"] << 8) | self.state["l"])
+        de = int((self.state["d"] << 8) | self.state["e"])
+        res = hl + de
+        self.state["h"] = (res & 0xff00) >> 8
+        self.state["l"] = (res & 0xff)
+        self.state["cc"]["cy"] = ((res & 0xffff0000) > 0)
 
     def op_0x1a(self):
-        pass
+        """ LDAX D """
+        mem_loc1 = int(hex(self.state["d"]), 16)
+        mem_loc2 = int(hex(self.state["e"]), 16)
+
+        self.state["a"] = self.state["memory"][(mem_loc1 << 8) | mem_loc2]
 
     def op_0x1b(self):
-        pass
+        """ DCX D """
+        self.state["d"] = hex(int(self.state["d"], 16) -
+                              1) if int(self.state["d"], 16) - 1 >= 0 else 255
+        self.state["e"] = hex(int(self.state["e"], 16) +
+                              1) if int(self.state["e"], 16) - 1 >= 0 else 255
 
     def op_0x1c(self):
         pass

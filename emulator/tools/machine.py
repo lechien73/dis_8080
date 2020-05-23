@@ -217,10 +217,19 @@ class i8080():
                               1) if int(self.state["e"], 16) - 1 >= 0 else 255
 
     def op_0x1c(self):
-        pass
+        """ INR E """
+        self.state["e"] = hex(int(self.state["e"], 16) +
+                              1) if int(self.state["e"], 16) + 1 <= 255 else 0
+        self._flag_zero(self.state["e"])
+        self._flag_sign(self.state["e"])
+        self._flag_parity(self.state["e"], 8)
 
     def op_0x1d(self):
-        pass
+        """ DCR E """
+        self.state["e"] = hex(int(self.state["e"], 16) - 1)
+        self._flag_zero(self.state["e"])
+        self._flag_sign(self.state["e"])
+        self._flag_parity(self.state["e"], 8)
 
     def op_0x1e(self):
         self.state["pc"] += 1

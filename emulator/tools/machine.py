@@ -128,7 +128,7 @@ class i8080():
         self._flag_zero(self.state["c"])
         self._flag_sign(self.state["c"])
         self._flag_parity(self.state["c"], 8)
-
+        
     def op_0x0d(self):
         """ DCR C """
         self.state["c"] = hex(int(self.state["c"], 16) - 1)
@@ -175,13 +175,23 @@ class i8080():
         self._flag_parity(self.state["d"], 8)
 
     def op_0x15(self):
-        pass
+        """ DCR D """
+        self.state["d"] = hex(int(self.state["d"], 16) - 1)
+        self._flag_zero(self.state["d"])
+        self._flag_sign(self.state["d"])
+        self._flag_parity(self.state["d"], 8)
 
     def op_0x16(self):
+        """ MVI D """
+        self.state["d"] = hex(self.state["memory"][self.state["pc"] + 1])
         self.state["pc"] += 1
 
     def op_0x17(self):
-        pass
+        """ RAL """
+        self.state["a"] = self._check_type(self.state["a"])
+        rotate = bin(self.state["a"])[3:] + str(self.state["cc"]["cy"])
+        self.state["cc"]["cy"] = bin(self.state["a"])[2:3]
+        self.state["a"] = hex(int("0b" + rotate, 0))
 
     def op_0x19(self):
         pass

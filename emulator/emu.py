@@ -4,6 +4,7 @@ from tools import machine
 from tools import opcodes
 
 cpu = machine.i8080()
+MEM_SIZE = 16384        # 16k memory
 
 
 def init_optable():
@@ -44,6 +45,7 @@ def emulate8080(ops_table, debug):
 
         if debug and input("Continue? ").lower() != "y":
             with open("debugfile.txt", "w") as f:
+                f.write(f"MEM_SIZE: {MEM_SIZE}\n")
                 for k, v in cpu.state.items():
                     f.write(f"{k}: {v}\n")
             running = False
@@ -51,14 +53,16 @@ def emulate8080(ops_table, debug):
 
 def main(debug):
 
+    cpu.state["memory"] = [0] * MEM_SIZE
+
     try:
         with open("../tools/invaders", "rb") as f:
             buffer = f.read()
     except IOError:
         sys.exit("File not found")
 
-    for b in buffer:
-        cpu.state["memory"].append(b)
+    for b in range(len(buffer)):
+        cpu.state["memory"][b] = buffer[b]
 
     ops_table = init_optable()
 

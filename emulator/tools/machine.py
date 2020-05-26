@@ -232,19 +232,38 @@ class i8080():
         self._flag_parity(self.state["e"], 8)
 
     def op_0x1e(self):
+        """ MVI E """
+        self.state["e"] = hex(self.state["memory"][self.state["pc"] + 1])
         self.state["pc"] += 1
 
     def op_0x1f(self):
-        pass
+        """ RAR """
+        self.state["a"] = self._check_type(self.state["a"])
+        rotate = str(self.state["cc"]["cy"]) + bin(self.state["a"])[2:-1]
+        self.state["cc"]["cy"] = bin(self.state["a"])[-1]
+        self.state["a"] = hex(int("0b" + rotate, 0))
 
     def op_0x21(self):
+        """ LXI H """
+        self.state["h"] = hex(self.state["memory"][self.state["pc"] + 2])
+        self.state["l"] = hex(self.state["memory"][self.state["pc"] + 1])
         self.state["pc"] += 2
 
     def op_0x22(self):
+        """ SHLD """
+        mem_loc1 = int(hex(self.state["memory"][self.state["pc"] + 2]), 16)
+        mem_loc2 = int(hex(self.state["memory"][self.state["pc"] + 1]), 16)
+        offset = mem_loc1 | mem_loc2 << 8
+        self.state["memory"][offset] = self.state["l"]
+        self.state["memory"][offset + 1] = self.state["h"]
         self.state["pc"] += 2
 
     def op_0x23(self):
-        pass
+        """ INX H """
+        self.state["h"] = hex(int(self.state["h"], 16) +
+                              1) if int(self.state["h"], 16) + 1 <= 255 else 0
+        self.state["l"] = hex(int(self.state["l"], 16) +
+                              1) if int(self.state["h"], 16) + 1 <= 255 else 0
 
     def op_0x24(self):
         pass

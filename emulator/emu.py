@@ -28,6 +28,8 @@ def init_optable():
 
 def emulate8080(ops_table, debug):
 
+    icount = 0
+
     running = True
 
     while running:
@@ -43,12 +45,16 @@ def emulate8080(ops_table, debug):
 
         cpu.state["pc"] += 1
 
-        if debug and input("Continue? ").lower() != "y":
-            with open("debugfile.txt", "w") as f:
-                f.write(f"MEM_SIZE: {MEM_SIZE}\n")
-                for k, v in cpu.state.items():
-                    f.write(f"{k}: {v}\n")
-            running = False
+        if debug and icount >= 10:
+            icount = 0
+            if input("Continue? ").lower() != "y":
+                with open("debugfile.txt", "w") as f:
+                    f.write(f"MEM_SIZE: {MEM_SIZE}\n")
+                    for k, v in cpu.state.items():
+                        f.write(f"{k}: {v}\n")
+                running = False
+        else:
+            icount += 1
 
 
 def main(debug):

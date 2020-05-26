@@ -49,6 +49,12 @@ class i8080():
 
         return int(value, 16)
 
+    def _arith_flags(self, result):
+        self.state["cc"]["cy"] = result > 0xff
+        self.state["cc"]["z"] = (result & 0xff) == 0
+        self.state["cc"]["s"] = 0x80 == (result & 0x80)
+        self._flag_parity(res & 0xff, 8)
+
     def op_0x00(self):
         """ NOP """
         return
@@ -266,16 +272,35 @@ class i8080():
                               1) if int(self.state["h"], 16) + 1 <= 255 else 0
 
     def op_0x24(self):
-        pass
+        """ INR H """
+        self.state["h"] = hex(int(self.state["h"], 16) +
+                              1) if int(self.state["h"], 16) + 1 <= 255 else 0
+        self._flag_zero(self.state["h"])
+        self._flag_sign(self.state["h"])
+        self._flag_parity(self.state["h"], 8)
 
     def op_0x25(self):
-        pass
+        """ DCR H """
+        self.state["h"] = hex(int(self.state["h"], 16) - 1)
+        self._flag_zero(self.state["h"])
+        self._flag_sign(self.state["h"])
+        self._flag_parity(self.state["h"], 8)
 
     def op_0x26(self):
+        """ MVI H """
+        self.state["h"] = hex(self.state["memory"][self.state["pc"] + 1])
         self.state["pc"] += 1
 
     def op_0x27(self):
-        pass
+        """ DAA """
+        self.state["a"] = self._check_type(self.state["a"])
+        if (self.state["a"] & 0xf) > 9:
+            self.state["a"] = hex(self.state["a"] + 6)
+
+        if (self.state["a"] & 0xf0) > 0x90:
+            result = self.state["a"] + 0x60
+            self.state["a"] = result & 0xff;
+            self._arith_flags(result)
 
     def op_0x29(self):
         pass

@@ -299,7 +299,7 @@ class i8080():
 
         if (self.state["a"] & 0xf0) > 0x90:
             result = self.state["a"] + 0x60
-            self.state["a"] = result & 0xff;
+            self.state["a"] = result & 0xff
             self._arith_flags(result)
 
     def op_0x29(self):

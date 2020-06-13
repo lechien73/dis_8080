@@ -134,7 +134,7 @@ class i8080():
         self._flag_zero(self.state["c"])
         self._flag_sign(self.state["c"])
         self._flag_parity(self.state["c"], 8)
-        
+
     def op_0x0d(self):
         """ DCR C """
         self.state["c"] = hex(int(self.state["c"], 16) - 1)
@@ -303,16 +303,37 @@ class i8080():
             self._arith_flags(result)
 
     def op_0x29(self):
-        pass
+        """ DAD H """
+        hl = int((self.state["h"] << 8) | self.state["l"])
+        res = hl + hl
+        self.state["h"] = (res & 0xff00) >> 8
+        self.state["l"] = (res & 0xff)
+        self.state["cc"]["cy"] = ((res & 0xffff0000) > 0)
 
     def op_0x2a(self):
+        """ LHLD """
+        mem_loc1 = int(hex(self.state["memory"][self.state["pc"] + 2]), 16)
+        mem_loc2 = int(hex(self.state["memory"][self.state["pc"] + 1]), 16)
+        offset = mem_loc1 | mem_loc2 << 8
+
+        self.state["l"] = self.state["memory"][offset]
+        self.state["h"] = self.state["memory"][offset + 1]
         self.state["pc"] += 2
 
     def op_0x2b(self):
-        pass
+        """ DCX H """
+        self.state["h"] = hex(int(self.state["h"], 16) -
+                              1) if int(self.state["h"], 16) - 1 >= 0 else 255
+        self.state["l"] = hex(int(self.state["l"], 16) +
+                              1) if int(self.state["l"], 16) - 1 >= 0 else 255
 
     def op_0x2c(self):
-        pass
+        """ INR L """
+        self.state["l"] = hex(int(self.state["l"], 16) +
+                              1) if int(self.state["l"], 16) + 1 <= 255 else 0
+        self._flag_zero(self.state["l"])
+        self._flag_sign(self.state["l"])
+        self._flag_parity(self.state["l"], 8)
 
     def op_0x2d(self):
         pass
